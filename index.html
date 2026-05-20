@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Websocket</title>
+</head>
+<body>
+    <h1>Websocket Demo</h1>
+
+    <input id="messageInput" type="text" placeholder="Type a message...">
+    <button onclick="sendMessage()">Kirim</button>
+
+    <ul id="messages"></ul>
+</body>
+
+ <script>
+    const socket = new WebSocket("ws://localhost:3000");
+
+    socket.onopen = () => {
+        console.log("Koneksi terhubung");
+    };
+
+    socket.onmessage = (event) => {
+        console.log("Pesan diterima:", event.data);
+        addMessage(`Pesan diterima: ${event.data}`);
+    };
+
+    socket.onclose = () => {
+        console.log("Koneksi ditutup");
+    };
+
+    socket.onerror = (error) => {
+        console.error("Terjadi kesalahan:", error);
+    };
+
+    function sendMessage() {
+        const input = document.getElementById("messageInput");
+        const message = input.value.trim();
+        if (message && socket.readyState === WebSocket.OPEN) {
+            socket.send(message);
+            addMessage(`Pesan terkirim: ${message}`);
+            input.value = "";
+        }
+    };
+
+    function addMessage(text) {
+        const li = document.createElement("li");
+        li.textContent = text;
+        document.getElementById("messages").appendChild(li);
+    };
+ </script>
+</html>
