@@ -11,7 +11,22 @@
     <input id="messageInput" type="text" placeholder="Type a message...">
     <button onclick="sendMessage()">Kirim</button>
 
-    <ul id="messages"></ul>
+    <br><br>
+
+    <div>
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Waktu</th>
+                    <th>Arah</th>
+                    <th>Pengirim</th>
+                    <th>Penerima</th>
+                    <th>Pesan</th>
+                </tr>
+            </thead>
+            <tbody id="messages"></tbody>
+        </table>
+    </div>
 </body>
 
  <script>
@@ -23,7 +38,7 @@
 
     socket.onmessage = (event) => {
         console.log("Pesan diterima:", event.data);
-        addMessage(`Pesan diterima: ${event.data}`);
+        addMessage("Diterima", "Server", "Client", event.data);
     };
 
     socket.onclose = () => {
@@ -39,15 +54,36 @@
         const message = input.value.trim();
         if (message && socket.readyState === WebSocket.OPEN) {
             socket.send(message);
-            addMessage(`Pesan terkirim: ${message}`);
+            addMessage("Dikirim", "Client", "Server", message);
             input.value = "";
         }
     };
 
-    function addMessage(text) {
-        const li = document.createElement("li");
-        li.textContent = text;
-        document.getElementById("messages").appendChild(li);
+    function addMessage(direction, sender, receiver, message) {
+        const tr = document.createElement("tr");
+
+        const timeTd = document.createElement("td");
+        timeTd.textContent = new Date().toLocaleTimeString();
+
+        const directionTd = document.createElement("td");
+        directionTd.textContent = direction;
+
+        const senderTd = document.createElement("td");
+        senderTd.textContent = sender;
+
+        const receiverTd = document.createElement("td");
+        receiverTd.textContent = receiver;
+
+        const messageTd = document.createElement("td");
+        messageTd.textContent = message;
+
+        tr.appendChild(timeTd);
+        tr.appendChild(directionTd);
+        tr.appendChild(senderTd);
+        tr.appendChild(receiverTd);
+        tr.appendChild(messageTd);
+
+        document.getElementById("messages").appendChild(tr);
     };
- </script>
+</script>
 </html>
